@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="ru" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Курс: ИИ-Продакшн для Продюсеров</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Calm Harmony (Background: slate-50, Text: slate-800, Accent: cyan-600) -->
+    <!-- Application Structure Plan: The application uses a thematic, single-page scrolling structure with a fixed header for easy navigation. The core idea is to guide the user from a high-level overview (hero section, key stats) to deep details (interactive program tabs, tech stack explorer) and finally to the value proposition (outcomes, benefits). This non-linear but guided exploration is more engaging than a simple document read-through. Tabs are used for the detailed program to prevent information overload and allow users to focus on one week at a time. The interactive tech stack helps demystify the tools used. -->
+    <!-- Visualization & Content Choices: 
+        - Report Info: Course duration, format, audience size. -> Goal: Inform. -> Viz/Method: Icon-based info cards. -> Interaction: None. -> Justification: Quick, scannable summary. -> Library/Method: HTML/Tailwind.
+        - Report Info: Weekly program details (topics, practice). -> Goal: Organize. -> Viz/Method: Tabbed interface. -> Interaction: Click to switch weeks. -> Justification: Manages complexity, prevents cognitive overload. -> Library/Method: Vanilla JS.
+        - Report Info: Hours per module (8, 10, 6). -> Goal: Compare. -> Viz/Method: Horizontal Bar Chart. -> Interaction: Hover for tooltips. -> Justification: Visualizes time investment per module. -> Library/Method: Chart.js.
+        - Report Info: Technology Stack. -> Goal: Organize/Inform. -> Viz/Method: Interactive grid of tools. -> Interaction: Click to expand details. -> Justification: More engaging than a list, provides context on demand. -> Library/Method: Vanilla JS.
+        - Report Info: Key Results/Benefits. -> Goal: Inform/Persuade. -> Viz/Method: Styled list with checkmark icons. -> Justification: Clearly communicates value. -> Library/Method: HTML/Tailwind. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .tab-active { 
+            background-color: #0891b2; /* cyan-600 */
+            color: white;
+        }
+        .tab-inactive {
+            background-color: #e2e8f0; /* slate-200 */
+            color: #334155; /* slate-700 */
+        }
+        .tool-card-details {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-out;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800">
+
+    <header class="bg-white/80 backdrop-blur-lg sticky top-0 z-50 shadow-sm">
+        <nav class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex-shrink-0">
+                    <a href="#" class="text-xl font-bold text-cyan-700">ИИ-Продакшн</a>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="#program" class="text-slate-600 hover:bg-cyan-600 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Программа</a>
+                        <a href="#stack" class="text-slate-600 hover:bg-cyan-600 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Инструменты</a>
+                        <a href="#results" class="text-slate-600 hover:bg-cyan-600 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Результаты</a>
+                        <a href="#enroll" class="bg-cyan-600 text-white px-3 py-2 rounded-md text-sm font-medium hover:bg-cyan-700">Записаться</a>
+                    </div>
+                </div>
+                <div class="-mr-2 flex md:hidden">
+                    <button id="mobile-menu-button" type="button" class="bg-slate-200 inline-flex items-center justify-center p-2 rounded-md text-slate-600 hover:text-white hover:bg-cyan-600 focus:outline-none">
+                        <span class="sr-only">Открыть меню</span>
+                        <span class="block h-6 w-6">☰</span>
+                    </button>
+                </div>
+            </div>
+        </nav>
+        <div id="mobile-menu" class="md:hidden hidden">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="#program" class="text-slate-600 hover:bg-cyan-600 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Программа</a>
+                <a href="#stack" class="text-slate-600 hover:bg-cyan-600 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Инструменты</a>
+                <a href="#results" class="text-slate-600 hover:bg-cyan-600 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Результаты</a>
+                <a href="#enroll" class="bg-cyan-600 text-white block px-3 py-2 rounded-md text-base font-medium hover:bg-cyan-700">Записаться</a>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section id="hero" class="py-20 sm:py-24 lg:py-32 bg-white">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-slate-900">
+                    <span class="block">ИИ-Продакшн: от Концепт-арта</span>
+                    <span class="block text-cyan-600">до Видеопилота</span>
+                </h1>
+                <p class="mt-6 max-w-2xl mx-auto text-lg text-slate-600">
+                    Интенсивный воркшоп для продюсеров по созданию визуального контента с помощью нейросетей. Научитесь быстро, дешево и качественно визуализировать идеи.
+                </p>
+                <div class="mt-8 flex justify-center space-x-4">
+                    <a href="#program" class="bg-cyan-600 text-white px-8 py-3 rounded-md text-lg font-semibold hover:bg-cyan-700 transition">Смотреть программу</a>
+                    <a href="#stack" class="bg-slate-200 text-slate-700 px-8 py-3 rounded-md text-lg font-semibold hover:bg-slate-300 transition">Технологии</a>
+                </div>
+            </div>
+        </section>
+
+        <section id="overview" class="py-16 sm:py-20 bg-slate-100">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+                    <div class="bg-white p-8 rounded-xl shadow-md">
+                        <div class="text-5xl font-bold text-cyan-600">3</div>
+                        <p class="mt-2 text-lg font-medium text-slate-700">Недели обучения</p>
+                        <p class="text-slate-500">Интенсивный формат для быстрого погружения.</p>
+                    </div>
+                    <div class="bg-white p-8 rounded-xl shadow-md">
+                        <div class="text-5xl font-bold text-cyan-600">24</div>
+                        <p class="mt-2 text-lg font-medium text-slate-700">Академических часа</p>
+                        <p class="text-slate-500">Только практика и применимые знания.</p>
+                    </div>
+                    <div class="bg-white p-8 rounded-xl shadow-md">
+                        <div class="text-5xl font-bold text-cyan-600">90</div>
+                        <p class="mt-2 text-lg font-medium text-slate-700">Секундный тизер</p>
+                        <p class="text-slate-500">Ваш итоговый проект, созданный с нуля.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="program" class="py-16 sm:py-20">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl sm:text-4xl font-bold text-slate-900">Программа курса</h2>
+                    <p class="mt-4 text-lg text-slate-600">Три недели практической работы — от статики к динамике и интеграции.</p>
+                </div>
+
+                <div class="mb-8">
+                    <div class="chart-container relative w-full max-w-2xl mx-auto h-64 md:h-72">
+                        <canvas id="hoursChart"></canvas>
+                    </div>
+                    <p class="text-center mt-2 text-sm text-slate-500">Распределение учебных часов по модулям</p>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-lg p-4 sm:p-6">
+                    <div class="mb-6 flex flex-col sm:flex-row justify-center rounded-lg overflow-hidden">
+                        <button data-tab="week1" class="tab-button flex-1 py-3 px-4 font-semibold transition tab-active">Неделя 1: Изображения</button>
+                        <button data-tab="week2" class="tab-button flex-1 py-3 px-4 font-semibold transition tab-inactive">Неделя 2: Видео</button>
+                        <button data-tab="week3" class="tab-button flex-1 py-3 px-4 font-semibold transition tab-inactive">Неделя 3: Интеграция</button>
+                    </div>
+
+                    <div id="week1" class="tab-content">
+                        <h3 class="text-2xl font-bold mb-4 text-cyan-700">Модуль 1: Мастерская ИИ-Изображений (8 часов)</h3>
+                        <p class="mb-6 text-slate-600"><strong>Цель:</strong> Освоить создание статичных изображений кинематографического качества, обеспечивая стилистическое и персонажное единство.</p>
+                        <div class="grid md:grid-cols-2 gap-8">
+                            <div>
+                                <h4 class="font-semibold text-lg mb-2">Темы:</h4>
+                                <ul class="list-disc list-inside space-y-2 text-slate-600">
+                                    <li>Ландшафт ИИ-моделей: Midjourney, Leonardo.AI, Adobe Firefly.</li>
+                                    <li>Промпт-инжиниринг для кино (композиция, оптика, свет).</li>
+                                    <li>Техники консистентности: Character Reference, ControlNet.</li>
+                                    <li>Продвинутые техники: In-painting и Out-painting.</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-lg mb-2">Практикум:</h4>
+                                <ul class="list-disc list-inside space-y-2 text-slate-600">
+                                    <li>Реверс-инжиниринг кадров из фильмов.</li>
+                                    <li>Создание консистентного персонажа (character sheet).</li>
+                                    <li>Визуализация ключевой сцены (3-5 кадров).</li>
+                                    <li>Доработка и апскейлинг изображений до 4K.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="week2" class="tab-content hidden">
+                        <h3 class="text-2xl font-bold mb-4 text-cyan-700">Модуль 2: Глубокое погружение в ИИ-Видео (10 часов)</h3>
+                        <p class="mb-6 text-slate-600"><strong>Цель:</strong> Освоить полный цикл генерации видео: от промптинга и "оживления" картинок до управления камерой и создания сложных сцен.</p>
+                        <div class="grid md:grid-cols-2 gap-8">
+                            <div>
+                                <h4 class="font-semibold text-lg mb-2">Темы:</h4>
+                                <ul class="list-disc list-inside space-y-2 text-slate-600">
+                                    <li>Сравнение видео-генераторов: Runway, Pika, Luma.</li>
+                                    <li>Методы генерации: Text-to-Video, Image-to-Video.</li>
+                                    <li>Мастерство видео-промптинга для описания движения.</li>
+                                    <li>Практическое освоение виртуальной камеры.</li>
+                                    <li>Аудио-генерация: голос и саундтреки.</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-lg mb-2">Практикум:</h4>
+                                <ul class="list-disc list-inside space-y-2 text-slate-600">
+                                    <li>Анимация статичных изображений из Модуля 1.</li>
+                                    <li>Генерация динамичных шотов с нуля.</li>
+                                    <li>Создание планов с движением камеры (наезд, облет).</li>
+                                    <li>Сборка микро-сцены и генерация аудио.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="week3" class="tab-content hidden">
+                        <h3 class="text-2xl font-bold mb-4 text-cyan-700">Модуль 3: Интеграция и Пайплайн (6 часов)</h3>
+                        <p class="mb-6 text-slate-600"><strong>Цель:</strong> "Бесшовно" встроить ИИ-инструменты в рабочий процесс, научиться обрабатывать сгенерированный материал и управлять проектами.</p>
+                        <div class="grid md:grid-cols-2 gap-8">
+                            <div>
+                                <h4 class="font-semibold text-lg mb-2">Темы:</h4>
+                                <ul class="list-disc list-inside space-y-2 text-slate-600">
+                                    <li>Разработка командного пайплайна и "базы знаний".</li>
+                                    <li>Постобработка: апскейлинг, удаление артефактов.</li>
+                                    <li>Цветокоррекция ИИ-видео в DaVinci/Premiere.</li>
+                                    <li>Стратегии гибридного продакшна.</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-lg mb-2">Итоговая аттестация:</h4>
+                                <ul class="list-disc list-inside space-y-2 text-slate-600">
+                                    <li>Монтаж 60-90 секундного тизера.</li>
+                                    <li>Полная постобработка ролика.</li>
+                                    <li>Финальная презентация проекта.</li>
+                                    <li>Защита разработанного командного пайплайна.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="stack" class="py-16 sm:py-20 bg-slate-100">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl sm:text-4xl font-bold text-slate-900">Технологический стек</h2>
+                    <p class="mt-4 text-lg text-slate-600">Мы работаем с лучшими инструментами, которые дают максимальный контроль и качество.</p>
+                    <p class="mt-1 text-sm text-slate-500">Нажмите на карточку, чтобы узнать больше.</p>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div class="tool-card-container">
+                        <div class="bg-white p-6 rounded-xl shadow-md cursor-pointer tool-card-header">
+                            <h4 class="font-bold text-xl">Изображения</h4>
+                            <p class="text-sm text-slate-500">Midjourney, Leonardo.AI, Adobe Firefly</p>
+                        </div>
+                        <div class="bg-white px-6 pb-4 rounded-b-xl tool-card-details">
+                            <p class="text-sm text-slate-600 pt-4 border-t border-slate-200">Основной фокус на Midjourney для художественного качества и Leonardo.AI для гибкости. Adobe Firefly используется для "бесшовной" интеграции и доработки в Photoshop.</p>
+                        </div>
+                    </div>
+                    <div class="tool-card-container">
+                        <div class="bg-white p-6 rounded-xl shadow-md cursor-pointer tool-card-header">
+                            <h4 class="font-bold text-xl">Видео</h4>
+                            <p class="text-sm text-slate-500">Runway, Pika, Luma Dream Machine</p>
+                        </div>
+                        <div class="bg-white px-6 pb-4 rounded-b-xl tool-card-details">
+                            <p class="text-sm text-slate-600 pt-4 border-t border-slate-200">Runway для лучшего контроля над камерой, Pika для стилизации и анимации, Luma для качественной генерации из изображений. Этот набор покрывает все основные задачи видео-продакшна.</p>
+                        </div>
+                    </div>
+                    <div class="tool-card-container">
+                        <div class="bg-white p-6 rounded-xl shadow-md cursor-pointer tool-card-header">
+                            <h4 class="font-bold text-xl">Аудио</h4>
+                            <p class="text-sm text-slate-500">ElevenLabs, Suno, Udio</p>
+                        </div>
+                        <div class="bg-white px-6 pb-4 rounded-b-xl tool-card-details">
+                            <p class="text-sm text-slate-600 pt-4 border-t border-slate-200">ElevenLabs для генерации и клонирования голоса, Suno/Udio для создания уникальных музыкальных треков и саундтреков под конкретную сцену.</p>
+                        </div>
+                    </div>
+                    <div class="tool-card-container">
+                        <div class="bg-white p-6 rounded-xl shadow-md cursor-pointer tool-card-header">
+                            <h4 class="font-bold text-xl">Пост-продакшн</h4>
+                            <p class="text-sm text-slate-500">Adobe/DaVinci, Topaz Video AI</p>
+                        </div>
+                        <div class="bg-white px-6 pb-4 rounded-b-xl tool-card-details">
+                            <p class="text-sm text-slate-600 pt-4 border-t border-slate-200">Интегрируем сгенерированные ассеты в профессиональный софт (Premiere Pro, DaVinci Resolve). Используем Topaz Video AI для апскейлинга и улучшения качества видео.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section id="results" class="py-16 sm:py-20">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="grid lg:grid-cols-2 gap-12 items-center">
+                    <div>
+                        <h2 class="text-3xl sm:text-4xl font-bold text-slate-900">Что вы получите в итоге?</h2>
+                        <p class="mt-4 text-lg text-slate-600">Этот курс дает не просто знания, а реальные навыки и конкурентное преимущество на рынке.</p>
+                        <ul class="mt-8 space-y-4">
+                            <li class="flex items-start">
+                                <span class="flex-shrink-0 h-6 w-6 text-cyan-500">✔</span>
+                                <span class="ml-3 text-slate-600"><strong>Формирование "сильных" промптов</strong> кинематографического уровня для генерации изображений и видео.</span>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="flex-shrink-0 h-6 w-6 text-cyan-500">✔</span>
+                                <span class="ml-3 text-slate-600"><strong>Создание консистентных персонажей</strong> и поддержание единого визуального стиля проекта.</span>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="flex-shrink-0 h-6 w-6 text-cyan-500">✔</span>
+                                <span class="ml-3 text-slate-600"><strong>Управление виртуальной камерой</strong> в ИИ-видеогенераторах для создания нужной динамики.</span>
+                            </li>
+                             <li class="flex items-start">
+                                <span class="flex-shrink-0 h-6 w-6 text-cyan-500">✔</span>
+                                <span class="ml-3 text-slate-600"><strong>Разработанный командный пайплайн</strong> для "бесшовной" интеграции ИИ в работу вашей компании.</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="bg-slate-900 rounded-xl p-8 text-center">
+                        <h3 class="text-2xl font-bold text-white">Ваш финальный проект</h3>
+                        <p class="mt-2 text-slate-300">60-90 секундный тизер, полностью созданный вами.</p>
+                        <div class="aspect-w-16 aspect-h-9 bg-slate-800 rounded-lg mt-6 flex items-center justify-center">
+                           <p class="text-slate-400">▶ Видео-плейсхолдер</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="enroll" class="bg-cyan-700">
+            <div class="container mx-auto py-16 px-4 sm:px-6 lg:px-8 text-center">
+                <h2 class="text-3xl font-bold text-white">Готовы ускорить ваш продакшн?</h2>
+                <p class="mt-4 text-lg text-cyan-100 max-w-2xl mx-auto">Инвестируйте в навыки, которые определят будущее кинопроизводства. Свяжитесь с нами, чтобы обсудить корпоративный формат для вашей команды.</p>
+                <a href="mailto:hello@example.com" class="mt-8 inline-block bg-white text-cyan-700 px-10 py-4 rounded-md text-lg font-semibold hover:bg-slate-100 transition">Обсудить детали</a>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-slate-800 text-white">
+        <div class="container mx-auto py-6 px-4 sm:px-6 lg:px-8 text-center text-sm text-slate-400">
+            <p>&copy; 2025 ИИ-Продакшн Курс. Все права защищены.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+
+            mobileMenuButton.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+            
+            document.querySelectorAll('#mobile-menu a').forEach(link => {
+                link.addEventListener('click', () => {
+                    mobileMenu.classList.add('hidden');
+                });
+            });
+
+            const tabButtons = document.querySelectorAll('.tab-button');
+            const tabContents = document.querySelectorAll('.tab-content');
+
+            tabButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const tabId = button.dataset.tab;
+
+                    tabButtons.forEach(btn => {
+                        btn.classList.remove('tab-active');
+                        btn.classList.add('tab-inactive');
+                    });
+                    button.classList.add('tab-active');
+                    button.classList.remove('tab-inactive');
+
+                    tabContents.forEach(content => {
+                        if (content.id === tabId) {
+                            content.classList.remove('hidden');
+                        } else {
+                            content.classList.add('hidden');
+                        }
+                    });
+                });
+            });
+            
+            const toolCardHeaders = document.querySelectorAll('.tool-card-header');
+            toolCardHeaders.forEach(header => {
+                header.addEventListener('click', () => {
+                    const details = header.nextElementSibling;
+                    if (details.style.maxHeight) {
+                        details.style.maxHeight = null;
+                    } else {
+                        details.style.maxHeight = details.scrollHeight + "px";
+                    }
+                });
+            });
+
+            const ctx = document.getElementById('hoursChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Модуль 1: Изображения', 'Модуль 2: Видео', 'Модуль 3: Интеграция'],
+                    datasets: [{
+                        label: 'Часы',
+                        data: [8, 10, 6],
+                        backgroundColor: [
+                            'rgba(14, 165, 233, 0.6)',
+                            'rgba(8, 145, 178, 0.6)',
+                            'rgba(21, 94, 117, 0.6)'
+                        ],
+                        borderColor: [
+                            'rgba(14, 165, 233, 1)',
+                            'rgba(8, 145, 178, 1)',
+                            'rgba(21, 94, 117, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return ` ${context.dataset.label}: ${context.raw} ч.`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Академические часы'
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
